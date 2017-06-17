@@ -4,9 +4,13 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     concat: {
       dist: {
-        src: ['public/client/*.js'],
+        src: [ 'public/client/*.js' ],
         dest: 'public/client/built.js'
       }
+    },
+
+    clean: {
+      contents: [ 'public/client/built.js', 'public/client/built_min.js' ]
     },
 
     mochaTest: {
@@ -33,8 +37,22 @@ module.exports = function(grunt) {
     },
 
     eslint: {
+      options: {
+          quiet: true
+      },
+
       target: [
         // Add list of files to lint here
+        'public/client/app.js',
+        'public/client/createLinkView.js',
+        'public/client/link.js',
+        'public/client/links.js',
+        'public/client/linksView.js',
+        'public/client/linkView.js',
+        'public/client/router.js',
+        'app/*.js',
+        'server.js',
+        'server-config.js'
       ]
     },
 
@@ -76,6 +94,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-mocha-test');
@@ -95,7 +114,11 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
-
+    'clean',
+    'test',
+    'eslint',
+    'concat',
+    'uglify'
   ]);
 
   grunt.registerTask('upload', function(n) {
@@ -107,8 +130,6 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('deploy', [
-    'concat',
-    'uglify',
     'shell:addall',
     'shell:commitall',
     'shell:pushlive'
