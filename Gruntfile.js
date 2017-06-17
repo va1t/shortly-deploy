@@ -20,15 +20,6 @@ module.exports = function(grunt) {
       }
     },
 
-    git_deploy: {
-      your_target: {
-        options: {
-          url: 'ssh://root@45.55.157.126/var/repo/site.git'
-        },
-        src: '/'
-      },
-    },
-
     uglify: {
     },
 
@@ -60,6 +51,7 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+        command: 'git push live master'
       }
     },
   });
@@ -72,7 +64,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-nodemon');
-  grunt.loadNpmTasks('grunt-git-deploy');
 
   grunt.registerTask('server-dev', function (target) {
     grunt.task.run([ 'nodemon', 'watch' ]);
@@ -97,8 +88,8 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('deploy', [
-    'git_deploy'
-  ]);
+  grunt.registerTask('deploy', function (n) {
+    grunt.task.run([ 'shell:prodServer' ]);
+  });
 
 };
