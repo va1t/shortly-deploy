@@ -25,6 +25,11 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      my_target: {
+        files: {
+          'public/client/built_min.js' : [ 'public/client/built.js' ]
+        }
+      }
     },
 
     eslint: {
@@ -54,7 +59,15 @@ module.exports = function(grunt) {
     },
 
     shell: {
-      prodServer: {
+      addall: {
+        command: 'git add *'
+      },
+
+      commitall: {
+        command: 'git commit -m "auto commit"'
+      },
+
+      pushlive: {
         command: 'git push live master'
       }
     },
@@ -62,7 +75,7 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-mocha-test');
@@ -82,7 +95,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
-    'concat'
+
   ]);
 
   grunt.registerTask('upload', function(n) {
@@ -93,8 +106,12 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('deploy', function (n) {
-    grunt.task.run([ 'shell:prodServer' ]);
-  });
+  grunt.registerTask('deploy', [
+    'concat',
+    'uglify',
+    'shell:addall',
+    'shell:commitall',
+    'shell:pushlive'
+  ]);
 
 };
